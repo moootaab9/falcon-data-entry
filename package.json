@@ -1,0 +1,19 @@
+{
+  "name": "falcon-data-entry",
+  "version": "1.0.0",
+  "description": "Simple falcon data entry project (Arabic, RTL)",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "prisma": "prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "prisma": "^4.0.0"
+  }
+}

@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Falcon {
+  id         Int      @id @default(autoincrement())
+  name       String
+  ringNumber String?  @unique
+  species    String?
+  sex        String?
+  age        Int?
+  weight     Float?
+  wingspan   Float?
+  owner      String?
+  trained    Boolean  @default(false)
+  location   String?
+  notes      String?
+  photo      String?  // path to uploaded file
+  createdAt  DateTime @default(now())
+}

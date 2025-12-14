@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>نظام إدخال بيانات الصقور</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>إدخال بيانات صقور</h1>
+
+    <form id="falconForm">
+      <label>اسم الصقر
+        <input name="name" required />
+      </label>
+
+      <label>رقم الخاتم
+        <input name="ringNumber" />
+      </label>
+
+      <label>النوع / السلالة
+        <input name="species" />
+      </label>
+
+      <label>الجنس
+        <select name="sex">
+          <option value="">غير محدد</option>
+          <option value="ذكر">ذكر</option>
+          <option value="أنثى">أنثى</option>
+        </select>
+      </label>
+
+      <label>العمر (سنة)
+        <input name="age" type="number" />
+      </label>
+
+      <label>الوزن (كغ)
+        <input name="weight" type="number" step="0.1" />
+      </label>
+
+      <label>المسافة بين الجناحين (سم)
+        <input name="wingspan" type="number" step="0.1" />
+      </label>
+
+      <label>المالك
+        <input name="owner" />
+      </label>
+
+      <label>مُدرّب؟
+        <input type="checkbox" name="trained" />
+      </label>
+
+      <label>الموقع
+        <input name="location" />
+      </label>
+
+      <label>ملاحظات
+        <textarea name="notes"></textarea>
+      </label>
+
+      <label>صورة الصقر
+        <input type="file" name="photo" accept="image/*" />
+      </label>
+
+      <button type="submit">حفظ</button>
+    </form>
+
+    <h2>قائمة الصقور</h2>
+    <div id="list"></div>
+  </div>
+
+<script>
+async function fetchList(){
+  const res = await fetch('/api/falcons');
+  const data = await res.json();
+  const container = document.getElementById('list');
+  if (data.length === 0) {
+    container.innerHTML = '<p>لا توجد سجلات بعد.</p>';
+    return;
+  }
+  let html = '<table>';
+  html += '<tr><th>اسم</th><th>خاتم</th><th>صورة</th><th>خيارات</th></tr>';
+  data.forEach(f=>{
+    html += '<tr>';
+    html += `<td>${f.name || ''}</td>`;
+    html += `<td>${f.ringNumber || ''}</td>`;
+    html += `<td>${f.photo ? '<img src="'+f.photo+'" class="thumb"/>' : ''}</td>`;
+    html += `<td><button onclick="deleteItem(${f.id})">حذف</button></td>`;
+    html += '</tr>';
+  });
+  html += '</table>';
+  container.innerHTML = html;
+}
+
+async function deleteItem(id){
+  if(!confirm('هل تريد حذف هذا السجل؟')) return;
+  await fetch('/api/falcons/' + id, { method: 'DELETE' });
+  fetchList();
+}
+
+document.getElementById('falconForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  const res = await fetch('/api/falcons', { method: 'POST', body: formData });
+  if (res.ok) {
+    alert('تم الحفظ');
+    form.reset();
+    fetchList();
+  } else {
+    alert('حدث خطأ أثناء الحفظ');
+  }
+});
+
+fetchList();
+</script>
+</body>
+</html>
